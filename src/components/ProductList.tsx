@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ShoppingBasket, ArrowRight, Star } from 'lucide-react';
+import { ShoppingBasket, ArrowRight, Star, Flame } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductListProps {
@@ -14,20 +14,19 @@ export default function ProductList({ products, whatsappNumber }: ProductListPro
   };
 
   return (
-    <section id="produk" className="py-20 bg-bg-cream">
+    <section id="produk" className="py-24 bg-bg-cream relative">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-yellow/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 relative z-10">
           <div className="space-y-4">
-            <h2 className="text-4xl md:text-5xl font-display font-black text-primary-brown tracking-tighter">
+            <h2 className="text-4xl md:text-6xl font-display font-black text-primary-brown tracking-tighter">
               Pilih Porsi <span className="text-primary-yellow">Ngemilmu!</span>
             </h2>
-            <p className="text-lg text-primary-brown/70 max-w-xl font-medium">
-              Dari yang pas di kantong sampai yang puas buat sharing. Bebas pilih sesuai sikonmu hari ini.
+            <p className="text-lg text-primary-brown/70 max-w-xl font-medium leading-relaxed">
+              Buat me-time atau sharing bareng bestie? Pilih ukuran yang paling pas buat nemenin momen asikmu hari ini.
             </p>
           </div>
-          <a href="#" className="flex items-center gap-2 text-primary-brown font-bold hover:gap-4 transition-all">
-            Lihat Katalog Lengkap <ArrowRight size={20} className="text-primary-yellow" />
-          </a>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -38,39 +37,43 @@ export default function ProductList({ products, whatsappNumber }: ProductListPro
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, type: "spring" }}
               viewport={{ once: true }}
-              className="bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group border-2 border-transparent hover:border-primary-yellow/20"
+              className="bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group border-2 border-transparent hover:border-primary-yellow/30 flex flex-col"
             >
               <div className="aspect-[4/3] overflow-hidden relative p-4 bg-gradient-to-t from-gray-50 to-white">
                 <img 
                   src={product.imageUrl} 
                   alt={product.name}
-                  className="w-full h-full object-cover rounded-[32px] group-hover:scale-110 transition-transform duration-700 shadow-sm"
+                  className="w-full h-full object-cover rounded-[32px] group-hover:scale-105 transition-transform duration-700 shadow-sm"
                 />
                 
+                <div className="absolute top-8 left-8 bg-white/90 backdrop-blur text-red-500 font-bold px-3 py-1.5 rounded-full text-sm shadow-sm flex items-center gap-1">
+                  <Flame size={16} className="text-red-500" /> Best Seller
+                </div>
+
                 <div className="absolute top-8 right-8 bg-primary-yellow text-primary-brown font-black px-4 py-1.5 rounded-full text-sm shadow-md flex items-center gap-1">
                   <Star size={14} className="fill-primary-brown" /> 
                   {product.weight || '50g'}
                 </div>
               </div>
               
-              <div className="p-8 space-y-6">
-                <div>
-                  <h3 className="text-2xl font-bold text-primary-brown mb-2 tracking-tight group-hover:text-primary-yellow transition-colors">{product.name}</h3>
-                  <p className="text-primary-brown/60 text-sm line-clamp-2 leading-relaxed font-medium">
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="mb-8">
+                  <h3 className="text-2xl font-black text-primary-brown mb-3 tracking-tight group-hover:text-primary-yellow transition-colors">{product.name}</h3>
+                  <p className="text-primary-brown/70 text-base leading-relaxed font-medium">
                     {product.description}
                   </p>
                 </div>
                 
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <span className="text-3xl font-display font-black text-primary-brown">
+                <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-4">
+                  <span className="text-4xl font-display font-black text-primary-brown mb-2">
                     {product.price}
                   </span>
                   <button 
                     onClick={() => handleOrder(product.name)}
-                    className="flex items-center gap-2 bg-primary-yellow text-primary-brown px-6 py-3.5 rounded-2xl hover:bg-primary-brown hover:text-white transition-all group-hover:scale-105 shadow-md hover:shadow-xl"
+                    className="w-full flex justify-center items-center gap-2 bg-primary-yellow text-primary-brown px-6 py-4 rounded-2xl hover:bg-primary-brown hover:text-white transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl font-black text-lg group/btn"
                   >
-                    <ShoppingBasket size={20} />
-                    <span className="font-bold">Beli</span>
+                    <ShoppingBasket size={24} className="group-hover/btn:scale-110 transition-transform" />
+                    Pesan via WhatsApp
                   </button>
                 </div>
               </div>

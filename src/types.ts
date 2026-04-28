@@ -9,6 +9,8 @@ export interface SiteSettings {
   instagramLink?: string;
   tiktokLink?: string;
   faviconUrl?: string;
+  facebookLink?: string;
+  youtubeLink?: string;
 }
 
 export interface Product {

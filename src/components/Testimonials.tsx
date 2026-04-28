@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Quote } from 'lucide-react';
+import { Quote, Star, BadgeCheck } from 'lucide-react';
 import { Testimonial } from '../types';
 
 interface TestimonialsProps {
@@ -10,11 +10,11 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
   // Bento grid layout classes
   const getBentoClasses = (index: number) => {
     switch (index % 4) {
-      case 0: return 'md:col-span-2 md:row-span-2 h-[400px] md:h-full bg-primary-yellow/10';
-      case 1: return 'md:col-span-1 md:row-span-1 h-[250px] bg-bg-cream border border-gray-100';
-      case 2: return 'md:col-span-1 md:row-span-1 h-[250px] bg-primary-yellow text-primary-brown';
-      case 3: return 'md:col-span-2 md:row-span-1 h-[300px] bg-primary-brown text-white';
-      default: return 'md:col-span-1 md:row-span-1 h-[250px] bg-bg-cream';
+      case 0: return 'md:col-span-2 md:row-span-2 h-[450px] md:h-full bg-primary-yellow/10';
+      case 1: return 'md:col-span-1 md:row-span-1 h-[280px] bg-bg-cream border border-gray-100';
+      case 2: return 'md:col-span-1 md:row-span-1 h-[280px] bg-primary-yellow text-primary-brown';
+      case 3: return 'md:col-span-2 md:row-span-1 h-[320px] bg-primary-brown text-white';
+      default: return 'md:col-span-1 md:row-span-1 h-[280px] bg-bg-cream';
     }
   };
 
@@ -54,13 +54,18 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                 <Quote size={40} className="fill-current" />
               </div>
               
-              <div className="relative z-10 space-y-6 pt-4">
-                <p className={`text-xl md:text-2xl font-medium leading-relaxed line-clamp-6 ${index % 4 === 3 ? 'text-white/90' : 'text-primary-brown'}`}>
+              <div className="relative z-10 space-y-4 pt-4">
+                <div className="flex gap-1" aria-label="5 stars rating">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={18} className={`${index % 4 === 3 ? 'fill-primary-yellow stroke-primary-yellow' : 'fill-amber-500 stroke-amber-500'}`} />
+                  ))}
+                </div>
+                <p className={`text-xl md:text-2xl font-medium leading-relaxed line-clamp-5 ${index % 4 === 3 ? 'text-white/90' : 'text-primary-brown'}`}>
                   "{item.text}"
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 mt-auto">
+              <div className="flex items-center gap-4 mt-auto pt-6 border-t border-current/10">
                 {item.avatarUrl ? (
                   <img src={item.avatarUrl} alt={item.name} className="w-12 h-12 rounded-full object-cover shadow-sm" />
                 ) : (
@@ -69,8 +74,10 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                   </div>
                 )}
                 <div>
-                  <h4 className={`font-bold ${index % 4 === 3 ? 'text-white' : 'text-primary-brown'}`}>{item.name}</h4>
-                  <p className={`text-sm ${index % 4 === 3 ? 'text-white/60' : 'text-primary-brown/60'}`}>{item.role || 'Pelanggan Setia'}</p>
+                  <h4 className={`font-bold flex items-center gap-1.5 ${index % 4 === 3 ? 'text-white' : 'text-primary-brown'}`}>
+                    {item.name} <BadgeCheck size={16} className={index % 4 === 3 ? 'text-blue-300' : 'text-blue-500'} />
+                  </h4>
+                  <p className={`text-sm ${index % 4 === 3 ? 'text-white/60' : 'text-primary-brown/60'}`}>{item.role || 'Pembeli Terverifikasi'}</p>
                 </div>
               </div>
             </motion.div>

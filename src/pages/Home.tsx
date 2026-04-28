@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc, query, orderBy } from 'firebase/firestore';
+import { Helmet } from 'react-helmet-async';
 import { db } from '../lib/firebase';
 import { SiteSettings, Product, Testimonial, FAQ } from '../types';
 import { defaultSettings, defaultProducts, defaultTestimonials, defaultFAQs } from '../constants';
@@ -65,8 +66,30 @@ export default function Home() {
     );
   }
 
+  // Determine a concise title based on settings (or default)
+  const pageTitle = "Snack Asik - Keripik Bawang Paling Kriuk";
+  const desc = settings.description || "Keripik Bawang Snack Asik terbuat dari bahan premium, renyah, dan gurih.";
+
   return (
     <div className="overflow-x-hidden">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={desc} />
+        {settings.faviconUrl && <link rel="icon" href={settings.faviconUrl} />}
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={desc} />
+        {settings.heroImage && <meta property="og:image" content={settings.heroImage} />}
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={desc} />
+        {settings.heroImage && <meta property="twitter:image" content={settings.heroImage} />}
+      </Helmet>
+
       <Hero 
         headline={settings.headline}
         description={settings.description}

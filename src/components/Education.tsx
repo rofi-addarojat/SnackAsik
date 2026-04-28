@@ -2,10 +2,10 @@ import { motion } from 'motion/react';
 import { BadgeCheck } from 'lucide-react';
 
 const stats = [
-  { label: 'Rahasia Renyah', value: 'Adonan Kalis', desc: 'Digiling tipis sempurna untuk tekstur renyah maksimal.', icon: '🥖' },
-  { label: 'Bumbu Alami', value: 'Bawang Super', desc: 'Menggunakan irisan bawang merah asli, bukan perisa.', icon: '🧄' },
-  { label: 'Energi Asik', value: 'Bikin Fokus', desc: 'Pas buat nemenin kerja atau ngerjain tugas.', icon: '✨' },
-  { label: 'Rasa Nostalgia', value: 'Resep Rumahan', desc: 'Cita rasa gurih yang ngingetin sama masakan ibu.', icon: '💛' },
+  { label: 'Rahasia Renyah', value: 'Digiling Tipis', desc: 'Adonan digiling tipis sempurna lalu dipotong kotak agar tekstur garingnya maksimal merata.', icon: '🥖' },
+  { label: 'Wangi Khas', value: 'Bawang & Seledri', desc: 'Perpaduan irisan daun seledri segar dan bawang merah yang menggugah selera.', icon: '🧄' },
+  { label: 'Teman Nyantai', value: 'Cocok Dimanapun', desc: 'Paling asik disandingkan dengan secangkir kopi, teh hangat, atau nonton TV.', icon: '☕' },
+  { label: 'Rasa Nostalgia', value: 'Resep Rumahan', desc: 'Cita rasa jadul yang ngingetin sama cemilan kue bawang buatan nenek.', icon: '💛' },
 ];
 
 export default function Education() {
@@ -53,7 +53,7 @@ export default function Education() {
                 Kenapa Bikin <span className="text-primary-yellow inline-block scale-110 ml-2">Ketagihan?</span>
               </h2>
               <p className="text-xl text-white/80 leading-relaxed font-medium">
-                Kami tidak kompromi soal kualitas. Perpaduan gandum pilihan dan bawang merah segar menciptakan rasa gurih yang gak bisa dilewatin.
+                Sadar nggak sih kalau keripik bawang tuh cemilan yang nggak lekang oleh waktu? Kami pertahankan bentuk kotak klasik dengan taburan seledri wangi yang bikin rindu.
               </p>
             </div>
 

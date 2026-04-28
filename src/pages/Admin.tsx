@@ -18,6 +18,7 @@ import {
   orderBy,
   updateDoc
 } from 'firebase/firestore';
+import { Helmet } from 'react-helmet-async';
 import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { SiteSettings, Product, Testimonial, FAQ } from '../types';
 import { defaultSettings } from '../constants';
@@ -112,6 +113,7 @@ export default function Admin() {
       name: 'Produk Baru',
       price: 'Rp 0',
       description: 'Deskripsi produk baru',
+      weight: '50g',
       imageUrl: 'https://images.unsplash.com/photo-1599490659213-e2b9527bb087?auto=format&fit=crop&q=80&w=400',
       order: products.length + 1
     };
@@ -141,6 +143,10 @@ export default function Admin() {
   if (!user || user.email !== ADMIN_EMAIL) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg-cream px-4">
+        <Helmet>
+          <title>Admin Login - Snack Asik</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
         <div className="bg-white p-10 rounded-[40px] shadow-2xl max-w-md w-full text-center space-y-8">
           <div className="bg-primary-yellow w-20 h-20 rounded-3xl flex items-center justify-center mx-auto shadow-lg">
             <LayoutDashboard size={40} className="text-primary-brown" />
@@ -163,6 +169,11 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-bg-cream flex">
+      <Helmet>
+        <title>Admin Dashboard - Snack Asik</title>
+        <meta name="robots" content="noindex, nofollow" />
+        {settings.faviconUrl && <link rel="icon" href={settings.faviconUrl} />}
+      </Helmet>
       {/* Sidebar */}
       <aside className="w-20 md:w-64 bg-primary-brown text-white p-4 flex flex-col items-center md:items-start gap-8">
         <div className="flex items-center gap-3 md:px-4 py-8">
@@ -287,6 +298,38 @@ export default function Admin() {
                     className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
                     value={settings.faviconUrl || ''}
                     onChange={e => setSettings({...settings, faviconUrl: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Instagram Link</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.instagramLink || ''}
+                    onChange={e => setSettings({...settings, instagramLink: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">TikTok Link</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.tiktokLink || ''}
+                    onChange={e => setSettings({...settings, tiktokLink: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Facebook Link</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.facebookLink || ''}
+                    onChange={e => setSettings({...settings, facebookLink: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">YouTube Link</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.youtubeLink || ''}
+                    onChange={e => setSettings({...settings, youtubeLink: e.target.value})}
                   />
                 </div>
               </div>
