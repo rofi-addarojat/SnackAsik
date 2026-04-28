@@ -19,6 +19,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { Helmet } from 'react-helmet-async';
+import ImageInput from '../components/ImageInput';
 import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { SiteSettings, Product, Testimonial, FAQ } from '../types';
 import { defaultSettings } from '../constants';
@@ -243,14 +244,11 @@ export default function Admin() {
                     onChange={e => setSettings({...settings, headline: e.target.value})}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Hero Image URL</label>
-                  <input 
-                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
-                    value={settings.heroImage}
-                    onChange={e => setSettings({...settings, heroImage: e.target.value})}
-                  />
-                </div>
+                <ImageInput 
+                  label="Hero Image URl"
+                  value={settings.heroImage}
+                  onChange={val => setSettings({...settings, heroImage: val})}
+                />
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Description</label>
                   <textarea 
@@ -292,14 +290,11 @@ export default function Admin() {
                     onChange={e => setSettings({...settings, location: e.target.value})}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Favicon URL</label>
-                  <input 
-                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
-                    value={settings.faviconUrl || ''}
-                    onChange={e => setSettings({...settings, faviconUrl: e.target.value})}
-                  />
-                </div>
+                <ImageInput 
+                  label="Favicon URL"
+                  value={settings.faviconUrl || ''}
+                  onChange={val => setSettings({...settings, faviconUrl: val})}
+                />
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Instagram Link</label>
                   <input 
@@ -368,23 +363,25 @@ export default function Admin() {
                         updateDoc(doc(db, 'products', product.id), { price: e.target.value });
                       }}
                     />
-                    <div className="flex gap-2">
-                       <input 
-                        className="flex-grow bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
-                        placeholder="Image URL"
+                    <div className="flex flex-col gap-2 relative">
+                      <div className="flex justify-between items-center bg-white p-2 rounded-xl">
+                        <span className="text-sm font-bold text-gray-500 px-2">Image</span>
+                        <button 
+                          onClick={() => deleteItem('products', product.id)}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-xl"
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
+                      <ImageInput 
                         value={product.imageUrl}
-                        onChange={e => {
-                          const newProds = products.map(p => p.id === product.id ? {...p, imageUrl: e.target.value} : p);
+                        onChange={val => {
+                          const newProds = products.map(p => p.id === product.id ? {...p, imageUrl: val} : p);
                           setProducts(newProds);
-                          updateDoc(doc(db, 'products', product.id), { imageUrl: e.target.value });
+                          updateDoc(doc(db, 'products', product.id), { imageUrl: val });
                         }}
+                        showPreview={false}
                       />
-                      <button 
-                        onClick={() => deleteItem('products', product.id)}
-                        className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
-                      >
-                        <Trash2 size={20} />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -417,6 +414,18 @@ export default function Admin() {
                       updateDoc(doc(db, 'testimonials', item.id), { text: e.target.value });
                     }}
                   />
+                  <div className="bg-white p-4 rounded-xl">
+                    <ImageInput 
+                      label="Avatar URL (Optional)"
+                      value={item.avatarUrl || ''}
+                      onChange={val => {
+                        const newItems = testimonials.map(t => t.id === item.id ? {...t, avatarUrl: val} : t);
+                        setTestimonials(newItems);
+                        updateDoc(doc(db, 'testimonials', item.id), { avatarUrl: val });
+                      }}
+                      showPreview={true}
+                    />
+                  </div>
                 </div>
               ))}
               <button 
