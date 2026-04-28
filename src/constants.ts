@@ -10,6 +10,9 @@ export const defaultSettings: SiteSettings = {
   facebookLink: "https://facebook.com",
   tiktokLink: "https://tiktok.com",
   youtubeLink: "https://youtube.com",
+  googleSiteVerification: "",
+  googleAnalyticsId: "",
+  googleTagManagerId: "",
 };
 
 export const defaultProducts: Product[] = [

@@ -22,7 +22,7 @@ import { Helmet } from 'react-helmet-async';
 import ImageInput from '../components/ImageInput';
 import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { SiteSettings, Product, Testimonial, FAQ, Article } from '../types';
-import { defaultSettings } from '../constants';
+import { defaultSettings, defaultProducts, defaultTestimonials, defaultFAQs } from '../constants';
 import { initialArticles } from '../data/articles';
 import { 
   LayoutDashboard, 
@@ -69,19 +69,54 @@ export default function Admin() {
     try {
       // Settings
       const settingsDoc = await getDoc(doc(db, 'settings', 'general'));
-      if (settingsDoc.exists()) setSettings(settingsDoc.data() as SiteSettings);
+      if (settingsDoc.exists()) {
+        setSettings(settingsDoc.data() as SiteSettings);
+      } else {
+        await setDoc(doc(db, 'settings', 'general'), defaultSettings);
+        setSettings(defaultSettings);
+      }
 
       // Products
       const pSnap = await getDocs(query(collection(db, 'products'), orderBy('order', 'asc')));
-      setProducts(pSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
+      if (pSnap.empty) {
+        const promises = defaultProducts.map(p => {
+          const { id, ...data } = p;
+          return addDoc(collection(db, 'products'), data);
+        });
+        await Promise.all(promises);
+        const newSnap = await getDocs(query(collection(db, 'products'), orderBy('order', 'asc')));
+        setProducts(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
+      } else {
+        setProducts(pSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
+      }
 
       // Testimonials
       const tSnap = await getDocs(query(collection(db, 'testimonials'), orderBy('order', 'asc')));
-      setTestimonials(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial)));
+      if (tSnap.empty) {
+        const promises = defaultTestimonials.map(t => {
+          const { id, ...data } = t;
+          return addDoc(collection(db, 'testimonials'), data);
+        });
+        await Promise.all(promises);
+        const newSnap = await getDocs(query(collection(db, 'testimonials'), orderBy('order', 'asc')));
+        setTestimonials(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial)));
+      } else {
+        setTestimonials(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial)));
+      }
 
       // FAQ
       const fSnap = await getDocs(query(collection(db, 'faqs'), orderBy('order', 'asc')));
-      setFaqs(fSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
+      if (fSnap.empty) {
+        const promises = defaultFAQs.map(f => {
+          const { id, ...data } = f;
+          return addDoc(collection(db, 'faqs'), data);
+        });
+        await Promise.all(promises);
+        const newSnap = await getDocs(query(collection(db, 'faqs'), orderBy('order', 'asc')));
+        setFaqs(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
+      } else {
+        setFaqs(fSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
+      }
 
       // Articles
       const aSnap = await getDocs(query(collection(db, 'articles')));
@@ -402,6 +437,40 @@ export default function Admin() {
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div className="md:col-span-2">
+                  <h3 className="text-xl font-bold border-b pb-2">SEO & Tracking</h3>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Site Verification Code</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.googleSiteVerification || ''}
+                    onChange={e => setSettings({...settings, googleSiteVerification: e.target.value})}
+                    placeholder="Contoh: xxxx-xxxxx-xxxx"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Analytics ID</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.googleAnalyticsId || ''}
+                    onChange={e => setSettings({...settings, googleAnalyticsId: e.target.value})}
+                    placeholder="Contoh: G-XXXXXXXXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Tag Manager ID</label>
+                  <input 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.googleTagManagerId || ''}
+                    onChange={e => setSettings({...settings, googleTagManagerId: e.target.value})}
+                    placeholder="Contoh: GTM-XXXXXXX"
+                  />
+                </div>
+              </div>
+
               <button 
                 type="submit" 
                 disabled={isSaving}

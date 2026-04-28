@@ -11,6 +11,9 @@ export interface SiteSettings {
   faviconUrl?: string;
   facebookLink?: string;
   youtubeLink?: string;
+  googleSiteVerification?: string;
+  googleAnalyticsId?: string;
+  googleTagManagerId?: string;
 }
 
 export interface Product {

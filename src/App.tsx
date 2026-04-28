@@ -5,10 +5,12 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Tracking from './components/Tracking';
 
 export default function App() {
   return (
     <Router>
+      <Tracking />
       <div className="min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-grow">
