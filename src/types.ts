@@ -33,6 +33,16 @@ export interface Testimonial {
   order: number;
 }
 
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  imageUrl: string;
+  published: boolean;
+  createdAt: number;
+}
+
 export interface FAQ {
   id: string;
   question: string;

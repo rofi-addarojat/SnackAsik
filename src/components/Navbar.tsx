@@ -16,9 +16,10 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Menu Cemilan', href: '#produk' },
-    { name: 'Rahasia Dapur', href: '#tentang' },
-    { name: 'Kata Mereka', href: '#testimoni' },
+    { name: 'Menu Cemilan', href: '/#produk' },
+    { name: 'Rahasia Dapur', href: '/#tentang' },
+    { name: 'Kata Mereka', href: '/#testimoni' },
+    { name: 'Artikel & Tips', href: '/artikel' },
   ];
 
   return (
@@ -40,13 +41,23 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href}
-              className="text-primary-brown font-bold hover:text-primary-yellow transition-colors"
-            >
-              {link.name}
-            </a>
+            link.href.startsWith('/#') || link.href.startsWith('#') ? (
+              <a 
+                key={link.name} 
+                href={link.href}
+                className="text-primary-brown font-bold hover:text-primary-yellow transition-colors"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link 
+                key={link.name} 
+                to={link.href}
+                className="text-primary-brown font-bold hover:text-primary-yellow transition-colors"
+              >
+                {link.name}
+              </Link>
+            )
           ))}
           <a 
             href="#produk"
@@ -76,14 +87,25 @@ export default function Navbar() {
           >
             <div className="flex flex-col p-6 gap-4">
               {navLinks.map((link) => (
-               <a 
-                  key={link.name} 
-                  href={link.href}
-                  className="text-lg font-bold text-primary-brown hover:text-primary-yellow bg-gray-50 p-4 rounded-xl"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
+               link.href.startsWith('/#') || link.href.startsWith('#') ? (
+                 <a 
+                   key={link.name} 
+                   href={link.href}
+                   className="text-lg font-bold text-primary-brown hover:text-primary-yellow bg-gray-50 p-4 rounded-xl"
+                   onClick={() => setIsMobileMenuOpen(false)}
+                 >
+                   {link.name}
+                 </a>
+               ) : (
+                 <Link 
+                   key={link.name} 
+                   to={link.href}
+                   className="text-lg font-bold text-primary-brown hover:text-primary-yellow bg-gray-50 p-4 rounded-xl"
+                   onClick={() => setIsMobileMenuOpen(false)}
+                 >
+                   {link.name}
+                 </Link>
+               )
               ))}
               <a 
                 href="#produk"

@@ -21,8 +21,9 @@ import {
 import { Helmet } from 'react-helmet-async';
 import ImageInput from '../components/ImageInput';
 import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
-import { SiteSettings, Product, Testimonial, FAQ } from '../types';
+import { SiteSettings, Product, Testimonial, FAQ, Article } from '../types';
 import { defaultSettings } from '../constants';
+import { initialArticles } from '../data/articles';
 import { 
   LayoutDashboard, 
   Settings as SettingsIcon, 
@@ -34,7 +35,8 @@ import {
   Trash2, 
   Save, 
   Loader2,
-  Trash
+  Trash,
+  FileText
 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'masroficom@gmail.com';
@@ -42,13 +44,14 @@ const ADMIN_EMAIL = 'masroficom@gmail.com';
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'settings' | 'products' | 'testimonials' | 'faqs'>('settings');
+  const [activeTab, setActiveTab] = useState<'settings' | 'products' | 'testimonials' | 'faqs' | 'articles'>('settings');
   
   // Data States
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
   const [products, setProducts] = useState<Product[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -79,6 +82,21 @@ export default function Admin() {
       // FAQ
       const fSnap = await getDocs(query(collection(db, 'faqs'), orderBy('order', 'asc')));
       setFaqs(fSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
+
+      // Articles
+      const aSnap = await getDocs(query(collection(db, 'articles')));
+      if (aSnap.empty) {
+        // Seed default articles if empty
+        const promises = initialArticles.map(article => {
+          const { id, ...data } = article;
+          return addDoc(collection(db, 'articles'), data);
+        });
+        await Promise.all(promises);
+        const newSnap = await getDocs(query(collection(db, 'articles')));
+        setArticles(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article)));
+      } else {
+        setArticles(aSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article)));
+      }
     } catch (e) {
       console.error(e);
     }
@@ -127,6 +145,55 @@ export default function Admin() {
     }
   };
 
+  const addTestimonial = async () => {
+    const newItem = {
+      name: 'Nama Baru',
+      text: 'Review baru',
+      role: 'Pelanggan Baru',
+      order: testimonials.length + 1
+    };
+    const path = 'testimonials';
+    try {
+      const docRef = await addDoc(collection(db, path), newItem);
+      setTestimonials([...testimonials, { ...newItem, id: docRef.id }]);
+    } catch (e) {
+      handleFirestoreError(e, OperationType.WRITE, path);
+    }
+  };
+
+  const addFaq = async () => {
+    const newItem = {
+      question: 'Pertanyaan Baru?',
+      answer: 'Jawaban',
+      order: faqs.length + 1
+    };
+    const path = 'faqs';
+    try {
+      const docRef = await addDoc(collection(db, path), newItem);
+      setFaqs([...faqs, { ...newItem, id: docRef.id }]);
+    } catch (e) {
+      handleFirestoreError(e, OperationType.WRITE, path);
+    }
+  };
+
+  const addArticle = async () => {
+    const newItem = {
+      title: 'Judul Artikel Baru',
+      slug: 'judul-artikel-baru-' + Date.now(),
+      content: 'Tulis isi artikel di sini...',
+      imageUrl: 'https://images.unsplash.com/photo-1613919113166-704944fd6ab9?auto=format&fit=crop&q=80&w=800',
+      published: false,
+      createdAt: Date.now()
+    };
+    const path = 'articles';
+    try {
+      const docRef = await addDoc(collection(db, path), newItem);
+      setArticles([{ ...newItem, id: docRef.id }, ...articles]);
+    } catch (e) {
+      handleFirestoreError(e, OperationType.WRITE, path);
+    }
+  };
+
   const deleteItem = async (col: string, id: string) => {
     if (!confirm('Yakin ingin menghapus?')) return;
     try {
@@ -134,6 +201,7 @@ export default function Admin() {
       if (col === 'products') setProducts(products.filter(p => p.id !== id));
       if (col === 'testimonials') setTestimonials(testimonials.filter(p => p.id !== id));
       if (col === 'faqs') setFaqs(faqs.filter(p => p.id !== id));
+      if (col === 'articles') setArticles(articles.filter(p => p.id !== id));
     } catch (e) {
       handleFirestoreError(e, OperationType.DELETE, col);
     }
@@ -190,6 +258,7 @@ export default function Admin() {
             { id: 'products', icon: ShoppingBasket, label: 'Products' },
             { id: 'testimonials', icon: MessageSquare, label: 'Testimonials' },
             { id: 'faqs', icon: HelpCircle, label: 'FAQ' },
+            { id: 'articles', icon: FileText, label: 'Articles' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -224,10 +293,15 @@ export default function Admin() {
           </div>
           {activeTab !== 'settings' && (
             <button 
-              onClick={activeTab === 'products' ? addProduct : undefined}
+              onClick={() => {
+                if (activeTab === 'products') addProduct();
+                else if (activeTab === 'testimonials') addTestimonial();
+                else if (activeTab === 'faqs') addFaq();
+                else if (activeTab === 'articles') addArticle();
+              }}
               className="bg-primary-brown text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-black transition-all"
             >
-              <Plus size={20} /> Tambah {activeTab.slice(0, -1)}
+              <Plus size={20} /> Tambah Item
             </button>
           )}
         </header>
@@ -344,26 +418,56 @@ export default function Admin() {
               {products.map(product => (
                 <div key={product.id} className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-bg-cream hover:bg-primary-yellow/5 transition-all">
                   <img src={product.imageUrl} className="w-24 h-24 rounded-2xl object-cover" alt="" />
-                  <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input 
-                      className="bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
-                      value={product.name}
-                      onChange={e => {
-                        const newProds = products.map(p => p.id === product.id ? {...p, name: e.target.value} : p);
-                        setProducts(newProds);
-                        updateDoc(doc(db, 'products', product.id), { name: e.target.value });
-                      }}
-                    />
-                    <input 
-                      className="bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
-                      value={product.price}
-                      onChange={e => {
-                        const newProds = products.map(p => p.id === product.id ? {...p, price: e.target.value} : p);
-                        setProducts(newProds);
-                        updateDoc(doc(db, 'products', product.id), { price: e.target.value });
-                      }}
-                    />
-                    <div className="flex flex-col gap-2 relative">
+                  <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-500 px-2">Nama Produk</label>
+                      <input 
+                        className="w-full bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={product.name}
+                        onChange={e => {
+                          const newProds = products.map(p => p.id === product.id ? {...p, name: e.target.value} : p);
+                          setProducts(newProds);
+                          updateDoc(doc(db, 'products', product.id), { name: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-sm font-bold text-gray-500 px-2">Harga</label>
+                       <input 
+                        className="w-full bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={product.price}
+                        onChange={e => {
+                          const newProds = products.map(p => p.id === product.id ? {...p, price: e.target.value} : p);
+                          setProducts(newProds);
+                          updateDoc(doc(db, 'products', product.id), { price: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-sm font-bold text-gray-500 px-2">Berat / Ukuran</label>
+                       <input 
+                        className="w-full bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={product.weight || ''}
+                        onChange={e => {
+                          const newProds = products.map(p => p.id === product.id ? {...p, weight: e.target.value} : p);
+                          setProducts(newProds);
+                          updateDoc(doc(db, 'products', product.id), { weight: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                       <label className="text-sm font-bold text-gray-500 px-2">Deskripsi</label>
+                       <textarea 
+                        className="w-full bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={product.description || ''}
+                        onChange={e => {
+                          const newProds = products.map(p => p.id === product.id ? {...p, description: e.target.value} : p);
+                          setProducts(newProds);
+                          updateDoc(doc(db, 'products', product.id), { description: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div className="md:col-span-2 lg:col-span-3 flex flex-col gap-2 relative mt-2">
                       <div className="flex justify-between items-center bg-white p-2 rounded-xl">
                         <span className="text-sm font-bold text-gray-500 px-2">Image</span>
                         <button 
@@ -394,16 +498,29 @@ export default function Admin() {
               {testimonials.map(item => (
                 <div key={item.id} className="p-6 rounded-3xl bg-bg-cream space-y-4">
                   <div className="flex justify-between items-start">
-                    <input 
-                      className="text-xl font-bold bg-transparent outline-none border-b border-transparent focus:border-primary-yellow"
-                      value={item.name}
-                      onChange={e => {
-                        const newItems = testimonials.map(t => t.id === item.id ? {...t, name: e.target.value} : t);
-                        setTestimonials(newItems);
-                        updateDoc(doc(db, 'testimonials', item.id), { name: e.target.value });
-                      }}
-                    />
-                    <button onClick={() => deleteItem('testimonials', item.id)} className="text-red-500 p-2"><Trash size={20} /></button>
+                    <div className="flex-grow space-y-2 mr-4">
+                      <input 
+                        className="w-full text-xl font-bold bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={item.name}
+                        onChange={e => {
+                          const newItems = testimonials.map(t => t.id === item.id ? {...t, name: e.target.value} : t);
+                          setTestimonials(newItems);
+                          updateDoc(doc(db, 'testimonials', item.id), { name: e.target.value });
+                        }}
+                        placeholder="Nama Pembeli"
+                      />
+                      <input 
+                        className="w-full text-sm font-medium text-gray-600 bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                        value={item.role || ''}
+                        onChange={e => {
+                          const newItems = testimonials.map(t => t.id === item.id ? {...t, role: e.target.value} : t);
+                          setTestimonials(newItems);
+                          updateDoc(doc(db, 'testimonials', item.id), { role: e.target.value });
+                        }}
+                        placeholder="Peran (misal: Pembeli Setia)"
+                      />
+                    </div>
+                    <button onClick={() => deleteItem('testimonials', item.id)} className="text-red-500 p-2 shrink-0 bg-white rounded-xl hover:bg-red-50"><Trash size={20} /></button>
                   </div>
                   <textarea 
                     className="w-full bg-white p-4 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
@@ -477,6 +594,101 @@ export default function Admin() {
                 className="w-full border-2 border-dashed border-gray-200 p-8 rounded-3xl text-gray-400 hover:border-primary-yellow hover:text-primary-yellow transition-all flex items-center justify-center gap-2"
               >
                 <Plus size={24} /> Tambah FAQ Baru
+              </button>
+            </div>
+          )}
+          {activeTab === 'articles' && (
+            <div className="space-y-6">
+              {articles.map(article => (
+                <div key={article.id} className="p-6 rounded-3xl bg-bg-cream space-y-4">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-grow space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-500 px-2">Judul Artikel</label>
+                        <input 
+                          className="w-full font-bold text-xl bg-white p-4 rounded-xl outline-none focus:ring-2 ring-primary-yellow"
+                          value={article.title}
+                          onChange={e => {
+                            const newItems = articles.map(art => art.id === article.id ? {...art, title: e.target.value} : art);
+                            setArticles(newItems);
+                            updateDoc(doc(db, 'articles', article.id), { title: e.target.value });
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-500 px-2">Slug (URL)</label>
+                        <input 
+                          className="w-full bg-white p-3 rounded-xl outline-none focus:ring-2 ring-primary-yellow font-mono text-sm"
+                          value={article.slug}
+                          onChange={e => {
+                            const newItems = articles.map(art => art.id === article.id ? {...art, slug: e.target.value} : art);
+                            setArticles(newItems);
+                            updateDoc(doc(db, 'articles', article.id), { slug: e.target.value });
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <button onClick={() => deleteItem('articles', article.id)} className="text-red-500 p-3 bg-white rounded-xl hover:bg-red-50">
+                      <Trash size={20} />
+                    </button>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-xl">
+                      <ImageInput 
+                        label="Cover Image"
+                        value={article.imageUrl || ''}
+                        onChange={val => {
+                          const newItems = articles.map(art => art.id === article.id ? {...art, imageUrl: val} : art);
+                          setArticles(newItems);
+                          updateDoc(doc(db, 'articles', article.id), { imageUrl: val });
+                        }}
+                        showPreview={true}
+                      />
+                    </div>
+                    <div className="bg-white p-4 rounded-xl flex items-center justify-between">
+                      <div className="space-y-1">
+                        <label className="font-bold text-primary-brown">Status Publikasi</label>
+                        <p className="text-sm text-gray-500">{article.published ? 'Artikel dapat dilihat publik' : 'Draft (disembunyikan)'}</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const newVal = !article.published;
+                          const newItems = articles.map(art => art.id === article.id ? {...art, published: newVal} : art);
+                          setArticles(newItems);
+                          updateDoc(doc(db, 'articles', article.id), { published: newVal });
+                        }}
+                        className={`w-14 h-8 rounded-full relative transition-colors ${article.published ? 'bg-green-500' : 'bg-gray-300'}`}
+                      >
+                        <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-transform ${article.published ? 'left-7' : 'left-1'}`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 px-2 flex justify-between">
+                      <span>Konten (Mendukung Markdown / HTML)</span>
+                      <a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Panduan Markdown</a>
+                    </label>
+                    <textarea 
+                      rows={10}
+                      className="w-full bg-white p-4 rounded-xl outline-none focus:ring-2 ring-primary-yellow font-mono text-sm leading-relaxed"
+                      value={article.content}
+                      onChange={e => {
+                        const newItems = articles.map(art => art.id === article.id ? {...art, content: e.target.value} : art);
+                        setArticles(newItems);
+                        updateDoc(doc(db, 'articles', article.id), { content: e.target.value });
+                      }}
+                      placeholder="Tulis konten artikel di sini..."
+                    />
+                  </div>
+                </div>
+              ))}
+              <button 
+                onClick={addArticle}
+                className="w-full border-2 border-dashed border-gray-200 p-8 rounded-3xl text-gray-400 hover:border-primary-yellow hover:text-primary-yellow transition-all flex items-center justify-center gap-2"
+              >
+                <Plus size={24} /> Tambah Artikel Baru
               </button>
             </div>
           )}

@@ -60,6 +60,7 @@ export default function Footer() {
           <h4 className="text-xl font-bold text-primary-yellow">Menu Pintar</h4>
           <ul className="space-y-3 font-medium">
             <li><a href="/" className="text-white/70 hover:text-primary-yellow transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-yellow"></span> Home</a></li>
+            <li><Link to="/artikel" className="text-white/70 hover:text-primary-yellow transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-yellow"></span> Artikel & Tips</Link></li>
             <li><a href="/#produk" className="text-white/70 hover:text-primary-yellow transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-yellow"></span> Menu Cemilan</a></li>
             <li><a href="/#tentang" className="text-white/70 hover:text-primary-yellow transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-yellow"></span> Rahasia Dapur</a></li>
             <li><Link to="/admin" className="text-white/70 hover:text-primary-yellow transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white/20"></span> Admin Area</Link></li>
