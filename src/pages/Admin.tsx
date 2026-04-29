@@ -358,11 +358,6 @@ export default function Admin() {
                   value={settings.heroImage}
                   onChange={val => setSettings({...settings, heroImage: val})}
                 />
-                <ImageInput 
-                  label="Gambar Proses Pembuatan"
-                  value={settings.processImage || ''}
-                  onChange={val => setSettings({...settings, processImage: val})}
-                />
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Description</label>
                   <textarea 
@@ -447,6 +442,11 @@ export default function Admin() {
                 <div className="md:col-span-2">
                   <h3 className="text-xl font-bold border-b pb-2">Konten "Rahasia Dapur"</h3>
                 </div>
+                <ImageInput 
+                  label="Gambar Proses Pembuatan"
+                  value={settings.processImage || ''}
+                  onChange={val => setSettings({...settings, processImage: val})}
+                />
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Badge Konten</label>
                   <input 

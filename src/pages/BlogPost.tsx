@@ -97,6 +97,16 @@ export default function BlogPost() {
           <Markdown>{article.content}</Markdown>
         </div>
 
+        <div className="mt-12 p-6 bg-primary-yellow/10 rounded-[24px] border border-primary-yellow/20 flex flex-col md:flex-row items-center justify-between gap-6">
+           <div className="flex-1">
+             <h4 className="font-bold text-primary-brown text-lg mb-2">Didukung oleh LSP Digital</h4>
+             <p className="text-secondary-brown font-medium">Tingkatkan kompetensi digital dan raih sertifikasi profesional Anda bersama <a href="https://lspdigital.id" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-bold underline">LSP Digital</a>.</p>
+           </div>
+           <a href="https://lspdigital.id" target="_blank" rel="noopener noreferrer" className="bg-white text-primary-brown border-2 border-primary-brown/10 px-6 py-3 rounded-xl font-bold hover:border-primary-yellow hover:scale-105 transition-all text-sm whitespace-nowrap shadow-sm">
+             Kunjungi Website
+           </a>
+        </div>
+
         <div className="mt-16 pt-8 border-t border-gray-100 flex justify-between items-center">
           <p className="text-primary-brown/60 font-bold">Terima kasih sudah membaca!</p>
           <Link to="/#produk" className="bg-primary-yellow text-primary-brown px-6 py-3 rounded-xl font-black hover:bg-primary-brown hover:text-white transition-colors">
