@@ -17,7 +17,7 @@ export default function Footer() {
           setSettings(snap.data() as SiteSettings);
         }
       } catch (error) {
-        console.error("Error fetching settings:", error);
+        // Fall back to default settings gracefully
       }
     };
     fetchSettings();

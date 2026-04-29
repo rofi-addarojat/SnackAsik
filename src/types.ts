@@ -2,6 +2,12 @@ export interface SiteSettings {
   headline: string;
   description: string;
   heroImage: string;
+  processImage?: string;
+  processHeadline?: string;
+  processDescription?: string;
+  processBadge?: string;
+  featuresHeadline?: string;
+  featuresDescription?: string;
   whatsappNumber: string;
   shopeeLink?: string;
   tokopediaLink?: string;
@@ -14,6 +20,8 @@ export interface SiteSettings {
   googleSiteVerification?: string;
   googleAnalyticsId?: string;
   googleTagManagerId?: string;
+  headScripts?: string;
+  bodyScripts?: string;
 }
 
 export interface Product {

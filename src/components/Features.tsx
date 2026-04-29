@@ -34,7 +34,13 @@ const features = [
   }
 ];
 
-export default function Features() {
+export default function Features({
+  headline = "Kenapa Kamu Wajib Nyobain?",
+  description = "Bukan sekadar keripik biasa. Snack Asik dibikin pakai cinta biar tiap gigitannya ngasih pengalaman ngemil yang beda."
+}: {
+  headline?: string;
+  description?: string;
+}) {
   return (
     <section className="py-24 relative bg-bg-cream overflow-hidden">
       {/* Decorative bg element */}
@@ -43,10 +49,10 @@ export default function Features() {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-16 space-y-4">
           <h2 className="text-4xl md:text-5xl font-display font-black text-primary-brown tracking-tighter">
-            Kenapa Kamu <span className="text-primary-yellow">Wajib Nyobain?</span>
+            {headline}
           </h2>
           <p className="text-lg text-primary-brown/70 max-w-2xl mx-auto font-medium">
-            Bukan sekadar keripik biasa. Snack Asik dibikin pakai cinta biar tiap gigitannya ngasih pengalaman ngemil yang beda.
+            {description}
           </p>
         </div>
 

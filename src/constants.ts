@@ -4,6 +4,12 @@ export const defaultSettings: SiteSettings = {
   headline: "Keripik Bawang Klasik! Wangi, Gurih, & Kriuknya Bikin Lupa Waktu.",
   description: "Ngemil Snack Asik yuk! Keripik bawang jadul dengan potongan kotak tipis yang pas di mulut. Perpaduan wangi bawang dan irisan seledrinya dijamin bikin tangan ga bisa berhenti nyomot. Teman paling pas buat segala suasana!",
   heroImage: "https://images.unsplash.com/photo-1613919113166-704944fd6ab9?auto=format&fit=crop&q=80&w=800",
+  processImage: "https://images.unsplash.com/photo-1563223552-30d01fda3bc6?auto=format&fit=crop&q=80&w=800",
+  processHeadline: "Kenapa Bikin Ketagihan?",
+  processDescription: "Sadar nggak sih kalau keripik bawang tuh cemilan yang nggak lekang oleh waktu? Kami pertahankan bentuk kotak klasik dengan taburan seledri wangi yang bikin rindu.",
+  processBadge: "Rahasia Dapur",
+  featuresHeadline: "Kenapa Kamu Wajib Nyobain?",
+  featuresDescription: "Bukan sekadar keripik biasa. Snack Asik dibikin pakai cinta biar tiap gigitannya ngasih pengalaman ngemil yang beda.",
   whatsappNumber: "089652074866",
   location: "Jl. Kubang Welingi",
   instagramLink: "https://instagram.com",
@@ -13,6 +19,8 @@ export const defaultSettings: SiteSettings = {
   googleSiteVerification: "",
   googleAnalyticsId: "",
   googleTagManagerId: "",
+  headScripts: "",
+  bodyScripts: "",
 };
 
 export const defaultProducts: Product[] = [

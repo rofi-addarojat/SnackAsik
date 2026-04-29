@@ -8,7 +8,19 @@ const stats = [
   { label: 'Rasa Nostalgia', value: 'Resep Rumahan', desc: 'Cita rasa jadul yang ngingetin sama cemilan kue bawang buatan nenek.', icon: '💛' },
 ];
 
-export default function Education() {
+export default function Education({ 
+  image,
+  headline = "Kenapa Bikin Ketagihan?",
+  description = "Sadar nggak sih kalau keripik bawang tuh cemilan yang nggak lekang oleh waktu? Kami pertahankan bentuk kotak klasik dengan taburan seledri wangi yang bikin rindu.",
+  badge = "Rahasia Dapur"
+}: { 
+  image?: string;
+  headline?: string;
+  description?: string;
+  badge?: string;
+}) {
+  const displayImage = image || "https://images.unsplash.com/photo-1563223552-30d01fda3bc6?auto=format&fit=crop&q=80&w=800";
+
   return (
     <section id="tentang" className="py-24 bg-primary-brown text-white overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
@@ -27,7 +39,7 @@ export default function Education() {
           >
             <div className="aspect-[4/3] rounded-[40px] overflow-hidden border-4 border-white/20 shadow-2xl">
               <img 
-                src="https://images.unsplash.com/photo-1563223552-30d01fda3bc6?auto=format&fit=crop&q=80&w=800" 
+                src={displayImage} 
                 alt="Proses Pembuatan" 
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-1000"
               />
@@ -47,13 +59,13 @@ export default function Education() {
           <div className="space-y-12">
             <div className="space-y-6">
               <div className="inline-block bg-white/10 text-primary-yellow px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase border border-primary-yellow/30">
-                Rahasia Dapur
+                {badge}
               </div>
               <h2 className="text-4xl md:text-5xl font-display font-black leading-[1.2]">
-                Kenapa Bikin <span className="text-primary-yellow inline-block scale-110 ml-2">Ketagihan?</span>
+                {headline}
               </h2>
               <p className="text-xl text-white/80 leading-relaxed font-medium">
-                Sadar nggak sih kalau keripik bawang tuh cemilan yang nggak lekang oleh waktu? Kami pertahankan bentuk kotak klasik dengan taburan seledri wangi yang bikin rindu.
+                {description}
               </p>
             </div>
 

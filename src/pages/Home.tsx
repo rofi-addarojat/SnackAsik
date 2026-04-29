@@ -15,9 +15,9 @@ import { Loader2 } from 'lucide-react';
 
 export default function Home() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [products, setProducts] = useState<Product[]>(defaultProducts);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [faqs, setFaqs] = useState<FAQ[]>(defaultFAQs);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,30 +28,35 @@ export default function Home() {
         if (settingsDoc.exists()) {
           setSettings({ ...defaultSettings, ...settingsDoc.data() } as SiteSettings);
         }
+      } catch (error) {
+        console.warn("Using offline default settings");
+      }
 
+      try {
         // Fetch Products
         const productsQuery = query(collection(db, 'products'), orderBy('order', 'asc'));
         const productsSnap = await getDocs(productsQuery);
         const productsList = productsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-        setProducts(productsList.length > 0 ? productsList : defaultProducts);
+        if (productsList.length > 0) setProducts(productsList);
+      } catch (error) {}
 
+      try {
         // Fetch Testimonials
         const testimonialsQuery = query(collection(db, 'testimonials'), orderBy('order', 'asc'));
         const testimonialsSnap = await getDocs(testimonialsQuery);
         const testimonialsList = testimonialsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial));
-        setTestimonials(testimonialsList.length > 0 ? testimonialsList : defaultTestimonials);
+        if (testimonialsList.length > 0) setTestimonials(testimonialsList);
+      } catch (error) {}
 
+      try {
         // Fetch FAQs
         const faqsQuery = query(collection(db, 'faqs'), orderBy('order', 'asc'));
         const faqsSnap = await getDocs(faqsQuery);
         const faqsList = faqsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as FAQ));
-        setFaqs(faqsList.length > 0 ? faqsList : defaultFAQs);
+        if (faqsList.length > 0) setFaqs(faqsList);
+      } catch (error) {}
 
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(false);
     };
 
     fetchData();
@@ -95,12 +100,20 @@ export default function Home() {
         description={settings.description}
         image={settings.heroImage}
       />
-      <Features />
+      <Features 
+        headline={settings.featuresHeadline}
+        description={settings.featuresDescription}
+      />
       <ProductList 
         products={products} 
         whatsappNumber={settings.whatsappNumber}
       />
-      <Education />
+      <Education 
+        image={settings.processImage} 
+        headline={settings.processHeadline}
+        description={settings.processDescription}
+        badge={settings.processBadge}
+      />
       <Testimonials testimonials={testimonials} />
       <FAQSection faqs={faqs} />
     </div>

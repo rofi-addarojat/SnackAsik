@@ -358,6 +358,11 @@ export default function Admin() {
                   value={settings.heroImage}
                   onChange={val => setSettings({...settings, heroImage: val})}
                 />
+                <ImageInput 
+                  label="Gambar Proses Pembuatan"
+                  value={settings.processImage || ''}
+                  onChange={val => setSettings({...settings, processImage: val})}
+                />
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Description</label>
                   <textarea 
@@ -440,33 +445,83 @@ export default function Admin() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                 <div className="md:col-span-2">
-                  <h3 className="text-xl font-bold border-b pb-2">SEO & Tracking</h3>
+                  <h3 className="text-xl font-bold border-b pb-2">Konten "Rahasia Dapur"</h3>
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Site Verification Code</label>
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Badge Konten</label>
                   <input 
                     className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
-                    value={settings.googleSiteVerification || ''}
-                    onChange={e => setSettings({...settings, googleSiteVerification: e.target.value})}
-                    placeholder="Contoh: xxxx-xxxxx-xxxx"
+                    value={settings.processBadge || ''}
+                    onChange={e => setSettings({...settings, processBadge: e.target.value})}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Analytics ID</label>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Headline</label>
                   <input 
                     className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
-                    value={settings.googleAnalyticsId || ''}
-                    onChange={e => setSettings({...settings, googleAnalyticsId: e.target.value})}
-                    placeholder="Contoh: G-XXXXXXXXXX"
+                    value={settings.processHeadline || ''}
+                    onChange={e => setSettings({...settings, processHeadline: e.target.value})}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Google Tag Manager ID</label>
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Description</label>
+                  <textarea 
+                    rows={3}
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.processDescription || ''}
+                    onChange={e => setSettings({...settings, processDescription: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div className="md:col-span-2">
+                  <h3 className="text-xl font-bold border-b pb-2">Konten "Fitur"</h3>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Headline Utama</label>
                   <input 
                     className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
-                    value={settings.googleTagManagerId || ''}
-                    onChange={e => setSettings({...settings, googleTagManagerId: e.target.value})}
-                    placeholder="Contoh: GTM-XXXXXXX"
+                    value={settings.featuresHeadline || ''}
+                    onChange={e => setSettings({...settings, featuresHeadline: e.target.value})}
+                  />
+                </div>
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Deskripsi Utama</label>
+                  <textarea 
+                    rows={3}
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 ring-primary-yellow outline-none transition-all"
+                    value={settings.featuresDescription || ''}
+                    onChange={e => setSettings({...settings, featuresDescription: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div className="md:col-span-2">
+                  <h3 className="text-xl font-bold border-b pb-2">SEO & Tracking Scripts</h3>
+                  <p className="text-sm text-gray-500 mt-2">Paste seluruh kodingan script dari Google Search Console, Analytics, Meta Pixel, dll (tanpa terkecuali) di bawah ini.</p>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Scripts Untuk Di Dalam &lt;head&gt;</label>
+                  <p className="text-xs text-gray-500 mb-2">Paste tag &lt;meta ...&gt; Google Site Verification, dan tag &lt;script&gt; Google Analytics / Tag Manager di sini.</p>
+                  <textarea 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 font-mono text-sm ring-primary-yellow outline-none transition-all"
+                    rows={6}
+                    value={settings.headScripts !== undefined ? settings.headScripts : (settings.googleSiteVerification || '')}
+                    onChange={e => setSettings({...settings, headScripts: e.target.value})}
+                    placeholder={'<meta name="google-site-verification" content="..." />\n<script async src="..."></script>'}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-primary-brown uppercase tracking-wider">Scripts Untuk Di Dalam &lt;body&gt;</label>
+                  <p className="text-xs text-gray-500 mb-2">Paste tag &lt;noscript&gt; dari Google Tag Manager atau script lain yang harus ada di dalam body di sini.</p>
+                  <textarea 
+                    className="w-full bg-bg-cream border-transparent p-4 rounded-2xl focus:ring-2 font-mono text-sm ring-primary-yellow outline-none transition-all"
+                    rows={4}
+                    value={settings.bodyScripts !== undefined ? settings.bodyScripts : (settings.googleTagManagerId || '')}
+                    onChange={e => setSettings({...settings, bodyScripts: e.target.value})}
+                    placeholder={'<noscript><iframe src="..." height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>'}
                   />
                 </div>
               </div>
