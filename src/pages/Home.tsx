@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc, query, orderBy } from 'firebase/firestore';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../lib/firebase';
-import { SiteSettings, Product, Testimonial, FAQ } from '../types';
+import { SiteSettings, Product, Testimonial, FAQ, Article } from '../types';
 import { defaultSettings, defaultProducts, defaultTestimonials, defaultFAQs } from '../constants';
+import { initialArticles } from '../data/articles';
 
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import ProductList from '../components/ProductList';
 import Education from '../components/Education';
+import LatestArticles from '../components/LatestArticles';
 import Testimonials from '../components/Testimonials';
 import FAQSection from '../components/FAQ';
 import { Loader2 } from 'lucide-react';
@@ -18,6 +20,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>(defaultProducts);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
   const [faqs, setFaqs] = useState<FAQ[]>(defaultFAQs);
+  const [articles, setArticles] = useState<Article[]>(initialArticles.slice(0, 3));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,27 +37,67 @@ export default function Home() {
 
       try {
         // Fetch Products
-        const productsQuery = query(collection(db, 'products'), orderBy('order', 'asc'));
+        const productsQuery = query(collection(db, 'products'));
         const productsSnap = await getDocs(productsQuery);
         const productsList = productsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-        if (productsList.length > 0) setProducts(productsList);
-      } catch (error) {}
+        if (productsList.length > 0) {
+          productsList.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setProducts(productsList);
+        } else {
+          setProducts(defaultProducts);
+        }
+      } catch (error) {
+        console.warn("Using default products due to fetch error/quota:", error);
+        setProducts(defaultProducts);
+      }
 
       try {
         // Fetch Testimonials
-        const testimonialsQuery = query(collection(db, 'testimonials'), orderBy('order', 'asc'));
+        const testimonialsQuery = query(collection(db, 'testimonials'));
         const testimonialsSnap = await getDocs(testimonialsQuery);
         const testimonialsList = testimonialsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial));
-        if (testimonialsList.length > 0) setTestimonials(testimonialsList);
-      } catch (error) {}
+        if (testimonialsList.length > 0) {
+          testimonialsList.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setTestimonials(testimonialsList);
+        } else {
+          setTestimonials(defaultTestimonials);
+        }
+      } catch (error) {
+        console.warn("Using default testimonials due to fetch error/quota:", error);
+        setTestimonials(defaultTestimonials);
+      }
 
       try {
         // Fetch FAQs
-        const faqsQuery = query(collection(db, 'faqs'), orderBy('order', 'asc'));
+        const faqsQuery = query(collection(db, 'faqs'));
         const faqsSnap = await getDocs(faqsQuery);
         const faqsList = faqsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as FAQ));
-        if (faqsList.length > 0) setFaqs(faqsList);
-      } catch (error) {}
+        if (faqsList.length > 0) {
+          faqsList.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setFaqs(faqsList);
+        } else {
+          setFaqs(defaultFAQs);
+        }
+      } catch (error) {
+        console.warn("Using default FAQs due to fetch error/quota:", error);
+        setFaqs(defaultFAQs);
+      }
+
+      try {
+        // Fetch Articles
+        const articlesQuery = query(collection(db, 'articles'), where('published', '==', true));
+        const articlesSnap = await getDocs(articlesQuery);
+        const articlesList = articlesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Article));
+        if (articlesList.length > 0) {
+          articlesList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          setArticles(articlesList.slice(0, 3));
+        } else {
+          setArticles(initialArticles.slice(0, 3));
+        }
+      } catch (error) {
+        console.warn("Using local articles due to fetch error/quota:", error);
+        setArticles(initialArticles.slice(0, 3));
+      }
 
       setLoading(false);
     };
@@ -114,6 +157,7 @@ export default function Home() {
         description={settings.processDescription}
         badge={settings.processBadge}
       />
+      <LatestArticles articles={articles} />
       <Testimonials testimonials={testimonials} />
       <FAQSection faqs={faqs} />
     </div>

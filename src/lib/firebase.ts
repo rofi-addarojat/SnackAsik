@@ -36,8 +36,8 @@ export interface FirestoreErrorInfo {
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errMessage = error instanceof Error ? error.message : String(error);
   
-  if (errMessage.includes('offline') || errMessage.includes('Failed to get document')) {
-    console.warn("Firestore offline warning:", errMessage);
+  if (errMessage.includes('offline') || errMessage.includes('Failed to get document') || errMessage.includes('Quota exceeded')) {
+    console.warn("Firestore service limitation:", errMessage);
     return;
   }
 

@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Article } from '../types';
+import { initialArticles } from '../data/articles';
 import { Link } from 'react-router-dom';
 import { FileText, ArrowRight } from 'lucide-react';
 
 export default function Blog() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,14 +15,16 @@ export default function Blog() {
       try {
         const q = query(
           collection(db, 'articles'),
-          where('published', '==', true),
-          // orderBy('createdAt', 'desc') // Need index for ordering, removing to avoid index requirements
+          where('published', '==', true)
         );
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Article));
-        // Client side sort
-        data.sort((a, b) => b.createdAt - a.createdAt);
-        setArticles(data);
+        
+        if (data.length > 0) {
+          // Client side sort
+          data.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          setArticles(data);
+        }
       } catch (error) {
         console.error("Error fetching articles:", error);
       } finally {

@@ -68,72 +68,112 @@ export default function Admin() {
   const fetchAdminData = async () => {
     try {
       // Settings
-      const settingsDoc = await getDoc(doc(db, 'settings', 'general'));
-      if (settingsDoc.exists()) {
-        setSettings(settingsDoc.data() as SiteSettings);
-      } else {
-        await setDoc(doc(db, 'settings', 'general'), defaultSettings);
+      try {
+        const settingsDoc = await getDoc(doc(db, 'settings', 'general'));
+        if (settingsDoc.exists()) {
+          setSettings(settingsDoc.data() as SiteSettings);
+        } else {
+          await setDoc(doc(db, 'settings', 'general'), defaultSettings);
+          setSettings(defaultSettings);
+        }
+      } catch (e) {
+        console.warn("Fallback to default settings");
         setSettings(defaultSettings);
       }
 
       // Products
-      const pSnap = await getDocs(query(collection(db, 'products'), orderBy('order', 'asc')));
-      if (pSnap.empty) {
-        const promises = defaultProducts.map(p => {
-          const { id, ...data } = p;
-          return addDoc(collection(db, 'products'), data);
-        });
-        await Promise.all(promises);
-        const newSnap = await getDocs(query(collection(db, 'products'), orderBy('order', 'asc')));
-        setProducts(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
-      } else {
-        setProducts(pSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
+      try {
+        const pSnap = await getDocs(query(collection(db, 'products')));
+        if (pSnap.empty) {
+          const promises = defaultProducts.map(p => {
+            const { id, ...data } = p;
+            return addDoc(collection(db, 'products'), data);
+          });
+          await Promise.all(promises);
+          const newSnap = await getDocs(query(collection(db, 'products')));
+          const items = newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setProducts(items);
+        } else {
+          const items = pSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setProducts(items);
+        }
+      } catch (e) {
+        console.warn("Fallback to default products");
+        setProducts(defaultProducts);
       }
 
       // Testimonials
-      const tSnap = await getDocs(query(collection(db, 'testimonials'), orderBy('order', 'asc')));
-      if (tSnap.empty) {
-        const promises = defaultTestimonials.map(t => {
-          const { id, ...data } = t;
-          return addDoc(collection(db, 'testimonials'), data);
-        });
-        await Promise.all(promises);
-        const newSnap = await getDocs(query(collection(db, 'testimonials'), orderBy('order', 'asc')));
-        setTestimonials(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial)));
-      } else {
-        setTestimonials(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial)));
+      try {
+        const tSnap = await getDocs(query(collection(db, 'testimonials')));
+        if (tSnap.empty) {
+          const promises = defaultTestimonials.map(t => {
+            const { id, ...data } = t;
+            return addDoc(collection(db, 'testimonials'), data);
+          });
+          await Promise.all(promises);
+          const newSnap = await getDocs(query(collection(db, 'testimonials')));
+          const items = newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setTestimonials(items);
+        } else {
+          const items = tSnap.docs.map(d => ({ id: d.id, ...d.data() } as Testimonial));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setTestimonials(items);
+        }
+      } catch (e) {
+        console.warn("Fallback to default testimonials");
+        setTestimonials(defaultTestimonials);
       }
 
       // FAQ
-      const fSnap = await getDocs(query(collection(db, 'faqs'), orderBy('order', 'asc')));
-      if (fSnap.empty) {
-        const promises = defaultFAQs.map(f => {
-          const { id, ...data } = f;
-          return addDoc(collection(db, 'faqs'), data);
-        });
-        await Promise.all(promises);
-        const newSnap = await getDocs(query(collection(db, 'faqs'), orderBy('order', 'asc')));
-        setFaqs(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
-      } else {
-        setFaqs(fSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ)));
+      try {
+        const fSnap = await getDocs(query(collection(db, 'faqs')));
+        if (fSnap.empty) {
+          const promises = defaultFAQs.map(f => {
+            const { id, ...data } = f;
+            return addDoc(collection(db, 'faqs'), data);
+          });
+          await Promise.all(promises);
+          const newSnap = await getDocs(query(collection(db, 'faqs')));
+          const items = newSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setFaqs(items);
+        } else {
+          const items = fSnap.docs.map(d => ({ id: d.id, ...d.data() } as FAQ));
+          items.sort((a, b) => (a.order || 0) - (b.order || 0));
+          setFaqs(items);
+        }
+      } catch (e) {
+        console.warn("Fallback to default FAQs");
+        setFaqs(defaultFAQs);
       }
 
       // Articles
-      const aSnap = await getDocs(query(collection(db, 'articles')));
-      if (aSnap.empty) {
-        // Seed default articles if empty
-        const promises = initialArticles.map(article => {
-          const { id, ...data } = article;
-          return addDoc(collection(db, 'articles'), data);
-        });
-        await Promise.all(promises);
-        const newSnap = await getDocs(query(collection(db, 'articles')));
-        setArticles(newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article)));
-      } else {
-        setArticles(aSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article)));
+      try {
+        const aSnap = await getDocs(query(collection(db, 'articles')));
+        if (aSnap.empty) {
+          const promises = initialArticles.map(article => {
+            const { id, ...data } = article;
+            return addDoc(collection(db, 'articles'), data);
+          });
+          await Promise.all(promises);
+          const newSnap = await getDocs(query(collection(db, 'articles')));
+          const items = newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article));
+          items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          setArticles(items);
+        } else {
+          const items = aSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article));
+          items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          setArticles(items);
+        }
+      } catch (e) {
+        console.warn("Fallback to default articles");
+        setArticles(initialArticles);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Admin data main fetch error:", e);
     }
   };
 
@@ -723,6 +763,46 @@ export default function Admin() {
           )}
           {activeTab === 'articles' && (
             <div className="space-y-6">
+              <div className="flex bg-primary-yellow/10 p-6 rounded-3xl justify-between items-center mb-6 border border-primary-yellow/20">
+                <div>
+                  <h3 className="font-bold text-primary-brown text-lg">Reset Semua Artikel</h3>
+                  <p className="text-secondary-brown text-sm">Jika materi artikel Anda masih kosong atau berisi tulisan acak, Anda dapat meresetnya kembali ke artikel bawaan yang baru.</p>
+                </div>
+                <button 
+                  onClick={async () => {
+                    const confirm = window.confirm("Peringatan: Ini akan menghapus SEMUA artikel saat ini dan menggantinya dengan artikel bawaan. Anda yakin?");
+                    if (!confirm) return;
+                    
+                    try {
+                      // Hapus semua artikel lama
+                      for (const article of articles) {
+                        await deleteDoc(doc(db, 'articles', article.id));
+                      }
+                      
+                      // Masukkan artikel baru
+                      const promises = initialArticles.map(article => {
+                        const { id, ...data } = article;
+                        return addDoc(collection(db, 'articles'), data);
+                      });
+                      await Promise.all(promises);
+                      
+                      const newSnap = await getDocs(query(collection(db, 'articles')));
+                      const items = newSnap.docs.map(d => ({ id: d.id, ...d.data() } as Article));
+                      items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                      setArticles(items);
+                      
+                      alert("Artikel berhasil di-reset!");
+                    } catch (e) {
+                      console.error(e);
+                      alert("Terjadi kesalahan saat mereset artikel.");
+                    }
+                  }}
+                  className="bg-red-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-red-600 transition-colors whitespace-nowrap"
+                >
+                  Reset ke Default
+                </button>
+              </div>
+
               {articles.map(article => (
                 <div key={article.id} className="p-6 rounded-3xl bg-bg-cream space-y-4">
                   <div className="flex justify-between items-start gap-4">

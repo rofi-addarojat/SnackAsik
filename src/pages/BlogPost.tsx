@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Article } from '../types';
+import { initialArticles } from '../data/articles';
 import Markdown from 'react-markdown';
 import { ArrowLeft, Clock } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
@@ -19,13 +20,22 @@ export default function BlogPost() {
       try {
         const q = query(collection(db, 'articles'), where('slug', '==', slug), limit(1));
         const snapshot = await getDocs(q);
+        
         if (!snapshot.empty) {
           setArticle({ ...snapshot.docs[0].data(), id: snapshot.docs[0].id } as Article);
         } else {
-          setArticle(null);
+          // Fallback to local data if not found in Firestore
+          const localArticle = initialArticles.find(a => a.slug === slug);
+          if (localArticle) {
+            setArticle(localArticle);
+          } else {
+            setArticle(null);
+          }
         }
       } catch (error) {
-        console.error("Error fetching article:", error);
+        console.warn("Using local article fallback due to fetch error/quota:", error);
+        const localArticle = initialArticles.find(a => a.slug === slug);
+        setArticle(localArticle || null);
       } finally {
         setLoading(false);
       }
