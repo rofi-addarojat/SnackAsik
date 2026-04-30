@@ -78,6 +78,7 @@ export default function Hero({ headline, description, image }: HeroProps) {
               src={image} 
               alt="Keripik Bawang"
               className="w-full h-auto aspect-[4/5] object-cover rounded-[30px] hover:scale-105 transition-transform duration-700 origin-center"
+              referrerPolicy="no-referrer"
             />
           </div>
           

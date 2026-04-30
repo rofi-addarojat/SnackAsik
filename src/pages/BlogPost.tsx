@@ -89,6 +89,7 @@ export default function BlogPost() {
               src={article.imageUrl || "https://images.unsplash.com/photo-1613919113166-704944fd6ab9?auto=format&fit=crop&q=80&w=800"} 
               alt={article.title}
               className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
             />
           </div>
         </header>

@@ -67,7 +67,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
 
               <div className="flex items-center gap-4 mt-auto pt-6 border-t border-current/10">
                 {item.avatarUrl ? (
-                  <img src={item.avatarUrl} alt={item.name} className="w-12 h-12 rounded-full object-cover shadow-sm" />
+                  <img src={item.avatarUrl} alt={item.name} className="w-12 h-12 rounded-full object-cover shadow-sm" referrerPolicy="no-referrer" />
                 ) : (
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center font-display font-black text-xl shadow-sm ${index % 4 === 2 ? 'bg-white text-primary-brown' : 'bg-primary-yellow text-primary-brown'}`}>
                     {item.name.charAt(0)}

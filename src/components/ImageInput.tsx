@@ -103,7 +103,7 @@ export default function ImageInput({ value, onChange, label, showPreview = true 
       {showPreview && value && (
         <div className="mt-4">
           <p className="text-xs text-gray-500 mb-2 font-medium">Preview:</p>
-          <img src={value} alt="Preview" className="h-32 object-contain rounded-xl border border-gray-200 bg-white" />
+          <img src={value} alt="Preview" className="h-32 object-contain rounded-xl border border-gray-100 bg-white shadow-sm" referrerPolicy="no-referrer" />
         </div>
       )}
     </div>

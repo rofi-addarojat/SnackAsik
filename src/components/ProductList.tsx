@@ -44,6 +44,7 @@ export default function ProductList({ products, whatsappNumber }: ProductListPro
                   src={product.imageUrl} 
                   alt={product.name}
                   className="w-full h-full object-cover rounded-[32px] group-hover:scale-105 transition-transform duration-700 shadow-sm"
+                  referrerPolicy="no-referrer"
                 />
                 
                 <div className="absolute top-8 left-8 bg-white/90 backdrop-blur text-red-500 font-bold px-3 py-1.5 rounded-full text-sm shadow-sm flex items-center gap-1">

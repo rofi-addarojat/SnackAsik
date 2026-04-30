@@ -68,6 +68,7 @@ export default function Blog() {
                     src={article.imageUrl || "https://images.unsplash.com/photo-1613919113166-704944fd6ab9?auto=format&fit=crop&q=80&w=800"} 
                     alt={article.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur text-primary-brown text-sm font-bold px-3 py-1.5 rounded-full shadow-sm">
                     {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}

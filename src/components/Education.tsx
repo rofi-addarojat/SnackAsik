@@ -42,6 +42,7 @@ export default function Education({
                 src={displayImage} 
                 alt="Proses Pembuatan" 
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-1000"
+                referrerPolicy="no-referrer"
               />
             </div>
             

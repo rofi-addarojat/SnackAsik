@@ -303,7 +303,7 @@ export default function Admin() {
             onClick={handleLogin}
             className="w-full bg-primary-brown text-white font-bold py-4 rounded-2xl hover:bg-black transition-all flex items-center justify-center gap-3"
           >
-            <img src="https://www.google.com/favicon.ico" className="w-5 h-5 invert" alt="Google" />
+            <img src="https://www.google.com/favicon.ico" className="w-5 h-5 invert" alt="Google" referrerPolicy="no-referrer" />
             Login dengan Google
           </button>
         </div>
@@ -581,7 +581,7 @@ export default function Admin() {
             <div className="space-y-6">
               {products.map(product => (
                 <div key={product.id} className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-bg-cream hover:bg-primary-yellow/5 transition-all">
-                  <img src={product.imageUrl} className="w-24 h-24 rounded-2xl object-cover" alt="" />
+                  <img src={product.imageUrl} className="w-24 h-24 rounded-2xl object-cover" alt="" referrerPolicy="no-referrer" />
                   <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-500 px-2">Nama Produk</label>
