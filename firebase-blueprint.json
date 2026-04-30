@@ -8,12 +8,26 @@
         "headline": { "type": "string" },
         "description": { "type": "string" },
         "heroImage": { "type": "string" },
+        "processImage": { "type": "string" },
+        "processHeadline": { "type": "string" },
+        "processDescription": { "type": "string" },
+        "processBadge": { "type": "string" },
+        "featuresHeadline": { "type": "string" },
+        "featuresDescription": { "type": "string" },
         "whatsappNumber": { "type": "string" },
         "shopeeLink": { "type": "string" },
         "tokopediaLink": { "type": "string" },
         "location": { "type": "string" },
         "instagramLink": { "type": "string" },
-        "tiktokLink": { "type": "string" }
+        "tiktokLink": { "type": "string" },
+        "faviconUrl": { "type": "string" },
+        "facebookLink": { "type": "string" },
+        "youtubeLink": { "type": "string" },
+        "googleSiteVerification": { "type": "string" },
+        "googleAnalyticsId": { "type": "string" },
+        "googleTagManagerId": { "type": "string" },
+        "headScripts": { "type": "string" },
+        "bodyScripts": { "type": "string" }
       },
       "required": ["headline", "description", "whatsappNumber"]
     },
@@ -55,6 +69,20 @@
         "order": { "type": "number" }
       },
       "required": ["question", "answer"]
+    },
+    "article": {
+      "title": "Article",
+      "description": "Blog post or news article",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "slug": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "published": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["title", "slug", "content"]
     }
   },
   "firestore": {
@@ -73,6 +101,10 @@
     "faqs/{faqId}": {
       "schema": "faq",
       "description": "FAQ items"
+    },
+    "articles/{articleId}": {
+      "schema": "article",
+      "description": "Blog articles"
     }
   }
 }
